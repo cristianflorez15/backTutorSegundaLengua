@@ -1,30 +1,30 @@
 const express = require('express');
-// const routerApi = require('./routes');
-// const { logErrors, errorHandler, boomErrorHandler } = require('./middlewares/error.handler');
-// const { dbConnection } = require('./database/config');
+const routerApi = require('../routes/index');
+const { logErrors, errorHandler, boomErrorHandler } = require('../middleware/error.handler');
+const { dbConnection } = require('../database/config');
 const port = process.env.PORT || 3001;
 const app = express();
 const http = require('http')
 const server = http.Server(app);
 // const { wsHandler } = require('./websocket/wsHandler');
-// const timeout = require('connect-timeout');
-// const io = require('socket.io')(server, {cors: {origin: 'http://localhost:3000'}});// https://plataformaeq.vercel.app
+const timeout = require('connect-timeout');
+const io = require('socket.io')(server, {cors: {origin: 'http://localhost:3000'}});// https://plataformaeq.vercel.app
 
-//for invalid request
+// for invalid request
 server.on('clientError', (err, socket) => {
   console.error(err);
   socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
 });
 
-//timeout requests
-// function haltOnTimedout (req, res, next) {
-//   if (!req.timedout){
-//     next()
-//   }else{
-//     res.status(408).json({message: 'La solicitud ha excedido el tiempo de espera'});
-//   }
-// }
-// app.use(timeout('20s'));
+// timeout requests
+function haltOnTimedout (req, res, next) {
+  if (!req.timedout){
+    next()
+  }else{
+    res.status(408).json({message: 'La solicitud ha excedido el tiempo de espera'});
+  }
+}
+app.use(timeout('20s'));
 
 // CORS headers
 app.use((req, res, next) => {
@@ -46,19 +46,19 @@ app.use((req, res, next) => {
 // });
 
 // // DB
-// dbConnection();
+dbConnection();
 
-// app.use(express.json());
-// app.use(haltOnTimedout);
+app.use(express.json());
+app.use(haltOnTimedout);
 
-// //gestión de rutas
-// routerApi(app);
+//gestión de rutas
+routerApi(app);
 
-// //manejo de errores
-// app.use(logErrors);
-// app.use(boomErrorHandler);
-// app.use(errorHandler);
-// app.use(haltOnTimedout);
+//manejo de errores
+app.use(logErrors);
+app.use(boomErrorHandler);
+app.use(errorHandler);
+app.use(haltOnTimedout);
 
 server.listen(port, () => {
     console.log('Mi port ' +  port);
