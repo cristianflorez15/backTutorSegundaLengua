@@ -6,9 +6,6 @@
   "scripts": {
     "start": "node api/index.js"
   },
-  "engines": {
-    "node": "16.20.2"
-  },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "bcrypt": "^5.1.0",
