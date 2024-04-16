@@ -27,13 +27,13 @@ function haltOnTimedout (req, res, next) {
 app.use(timeout('20s'));
 
 // CORS headers
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', 'https://front-tutor-segunda-lengua.vercel.app') // https://front-tutor-segunda-lengua.vercel.app   http://localhost:3000
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
-//   res.setHeader('Access-Control-Allow-Credentials', true )
-//   res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization")
-//   next()
-// });
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*') // https://front-tutor-segunda-lengua.vercel.app   http://localhost:3000
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
+  res.setHeader('Access-Control-Allow-Credentials', true )
+  res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization")
+  next()
+});
 
 // io.on('connection', (socket) => {
 //   // console.log('User connected');
