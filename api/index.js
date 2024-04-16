@@ -8,7 +8,7 @@ const http = require('http')
 const server = http.Server(app);
 // const { wsHandler } = require('./websocket/wsHandler');
 const timeout = require('connect-timeout');
-const io = require('socket.io')(server, {cors: {origin: 'http://localhost:3000'}});// 
+const io = require('socket.io')(server, {cors: {origin: 'https://front-tutor-segunda-lengua.vercel.app'}});// 
 
 // for invalid request
 server.on('clientError', (err, socket) => {
