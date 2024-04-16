@@ -4,32 +4,28 @@ const Usuario = Schema({
     nombre : {
         type: String,
         required: true,
-        unique: true
+        unique: false
     },
     apellido : {
         type: String,
         required: true,
-        unique: true
     },
-    mail : {
+    correo : {
         type: String,
         required: true,
-        unique: true
+        unique: false
     },
-    password : {
+    contrasena : {
         type: String,
         required: true,
-        unique: true
     },
-    nativeLanguage : {
+    idiomaNativo : {
         type: String,
         required: true,
-        unique: true
     },
-    age : {
-        type: Number,
+    fechaNacimiento : {
+        type: Date,
         required: true,
-        unique: true
     },
 })
 

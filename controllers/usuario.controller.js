@@ -8,8 +8,8 @@ class UsuarioController{
 
     async create(req=request, res=response){
         try {
-            var nuevoUsuario = new usuario({...req.body, password: await bcrypt.hash(req.body.password, 10)});
-            var usuarioCreado = await nuevoUsuario.save().then(usuario => {
+            const nuevoUsuario = new usuario({...req.body, contrasena: await bcrypt.hash(req.body.contrasena, 10)});
+            const usuarioCreado = await nuevoUsuario.save().then(usuario => {
                 return usuario._id;
             });
             if(usuarioCreado){
@@ -18,13 +18,14 @@ class UsuarioController{
                 return res.status(400).json({message: 'Problemas para crear usuario', status: 400});
             }
         } catch (error) {
+            console.log(error)
             return res.status(500).json({message: 'Problemas en el servidor', status: 500});
         }
     }
 
     async edit(req=request, res=response){
         try {
-            var usuarioActualizado = await usuario.findByIdAndUpdate(req.query.id, req.body).then(usuario => {
+            const usuarioActualizado = await usuario.findByIdAndUpdate(req.query.id, req.body).then(usuario => {
                 if(usuario){
                     return usuario._id;
                 }
@@ -41,13 +42,13 @@ class UsuarioController{
 
     async get(req=request, res=response){
         try {
-            var user = await usuario.findOne({_id: req.query.id}).then(us => {
+            const user = await usuario.findOne({_id: req.query.id}).then(us => {
                 if(us){
                     return ({
                         nombre : us.nombre,
-                        mail : us.mail,
-                        nativeLanguage : us.nativeLanguage,
-                        age : us.age
+                        correo : us.correo,
+                        idiomaNativo : us.idiomaNativo,
+                        fechaNacimiento : us.fechaNacimiento
                     })
                 }
             });
@@ -63,7 +64,7 @@ class UsuarioController{
 
     async delete(req=request, res=response){
         try {
-            var user = await usuario.findByIdAndDelete({_id: req.query.id});
+            const user = await usuario.findByIdAndDelete({_id: req.query.id});
             if(user){
                 return res.status(200).json({message: 'Usuario eliminado', status: 200});
             }else{
@@ -76,16 +77,17 @@ class UsuarioController{
 
     async login(req = request, res = response){
         try {
-            const password = req.body.password;
-            const user = await usuario.findOne({mail: req.body.mail});
+            const contrasena = req.body.contrasena;
+            const user = await usuario.findOne({correo: req.body.correo});
 
             if(user){
-                const isMatch = await bcrypt.compare(password, user.password);
+                const isMatch = await bcrypt.compare(contrasena, user.contrasena);
 
                 if(isMatch){
                     const payload = {
                         nombre: user.nombre,
-                        mail: user.mail
+                        correo: user.correo,
+                        userId: user._id
                     };
                     const token = jwt.sign(payload, config.jwtSecret);
                     return res.status(200).json({ token: token, nombre: payload.nombre, status: 200 });

@@ -8,11 +8,11 @@ const http = require('http')
 const server = http.Server(app);
 // const { wsHandler } = require('./websocket/wsHandler');
 const timeout = require('connect-timeout');
-const io = require('socket.io')(server, {cors: {origin: 'http://localhost:3000'}});// https://plataformaeq.vercel.app
+const io = require('socket.io')(server, {cors: {origin: 'http://localhost:3000'}});// 
 
 // for invalid request
 server.on('clientError', (err, socket) => {
-  console.error(err);
+  // console.error(err);
   socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
 });
 
@@ -28,7 +28,7 @@ app.use(timeout('20s'));
 
 // CORS headers
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')// https://plataformaeq.vercel.app
+  res.setHeader('Access-Control-Allow-Origin', 'https://front-tutor-segunda-lengua.vercel.app') // https://front-tutor-segunda-lengua.vercel.app   http://localhost:3000
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
   res.setHeader('Access-Control-Allow-Credentials', true )
   res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization")
