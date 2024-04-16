@@ -8,7 +8,6 @@ const http = require('http')
 const server = http.Server(app);
 // const { wsHandler } = require('./websocket/wsHandler');
 const timeout = require('connect-timeout');
-const allowCors = require('./cors');
 // const io = require('socket.io')(server, {cors: {origin: 'https://front-tutor-segunda-lengua.vercel.app'}});// 
 
 // for invalid request
@@ -29,7 +28,6 @@ app.use(timeout('20s'));
 
 // CORS headers
 // app.use((req, res, next) => {
-app.use(allowCors);
 //   res.setHeader('Access-Control-Allow-Origin', 'https://front-tutor-segunda-lengua.vercel.app') // https://front-tutor-segunda-lengua.vercel.app   http://localhost:3000
 //   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
 //   res.setHeader('Access-Control-Allow-Credentials', true )
