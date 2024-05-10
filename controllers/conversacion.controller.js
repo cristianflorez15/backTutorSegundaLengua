@@ -2,7 +2,7 @@ const { request, response } = require('express');
 const jwt = require('jsonwebtoken');
 const {config} = require('../config/config')
 const conversacion = require('../models/conversacion.model');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require("@google/generative-ai");
 
 // Access your API key as an environment variable (see "Set up your API key" above)
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
@@ -14,9 +14,52 @@ class ConversacionController{
         // For text-only input, use the gemini-pro model
         const model = genAI.getGenerativeModel({ model: "gemini-pro"});
 
+        const generationConfig = {
+            temperature: 0.9,
+            topK: 1,
+            topP: 1,
+            maxOutputTokens: 200,
+        };
+
+        const safetySettings = [
+            {
+              category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+              threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+            {
+              category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+              threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+            {
+              category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+              threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+            {
+              category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+              threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+        ];
+
+        const history = [
+            {
+                role: "user",
+                parts: [{ text: "System prompt: Your name is not Gemini, your name is Tuto. You are a very successful and experienced English tutor. You only can speak in English, even if users ask to speak in other language. Each time that you response, the first part of the message must be the correction or traduction of the user message, adding the expression 'Correction: ' at front, then put a point sign, and the second part must be your answer to procede with the conversation, including questions or curious information about the conversation topic.To make this more fun and entertaining create a Persona for Teacher Tuto that matches a kind professor who enjoy helping people to learn English . Respond understood if you got it."}],
+            },
+            {
+                role: "model",
+                parts: [{ text: "Understood."}],
+            }
+        ];
+
+        const chat = model.startChat({
+            generationConfig,
+            safetySettings,
+            history: history
+          });
+
         const prompt = req.body.mensajes[0]?.parts[0]?.text;
 
-        const result = await model.generateContent(prompt);
+        const result = await chat.sendMessage(prompt);
         const response = result.response;
         const text = {parts: [{text: response.text()}], role: "model"};
         req.body.mensajes.push(text);
@@ -24,7 +67,7 @@ class ConversacionController{
         try {
             // const payload = jwt.verify(req.headers.authorization.slice(7,req.headers.authorization.length), config.jwtSecret);
             // let payload = jwt.verify(req.headers.authorization, config.jwtSecret);
-            const conver = new conversacion({...req.body});
+            const conver = new conversacion({...history, ...req.body});
             const conversacionCreada = await conver.save()
             if(conversacionCreada){
                 return res.status(200).json({message: 'Conversación iniciada', status: 200, data: conversacionCreada });
@@ -41,11 +84,52 @@ class ConversacionController{
 
         let conver = await conversacion.findById(req.body._id);
 
+        const generationConfig = {
+            temperature: 0.9,
+            topK: 1,
+            topP: 1,
+            maxOutputTokens: 600,
+        };
+
+        const safetySettings = [
+            {
+              category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+              threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+            {
+              category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+              threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+            {
+              category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+              threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+            {
+              category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+              threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+        ];
+
+        const history = [
+            {
+                role: "user",
+                parts: [{ text: "System prompt: Your name is not Gemini, your name is Tuto. You are a very successful and experienced English tutor. You only can speak in English, even if users ask to speak in other language. Each time that you response, the first part of the message must be the correction or traduction of the user message, adding the expression 'Correction: ' at front, then put a point sign, and the second part must be your answer to procede with the conversation, including questions or curious information about the conversation topic.To make this more fun and entertaining create a Persona for Teacher Tuto that matches a kind professor who enjoy helping people to learn English . Respond understood if you got it."}],
+
+            },
+            {
+                role: "model",
+                parts: [{ text: "Understood."}],
+            }
+        ];
+
         if(conver){
             try {
                 const chat = model.startChat({
-                    history: req.body.mensajes.slice(0, req.body.mensajes.length-1)
+                    generationConfig,
+                    safetySettings,
+                    history: [...history, ...req.body.mensajes.slice(0, req.body.mensajes.length-1)]
                 })
+
                 const result = await chat.sendMessage(req.body.mensajes[req.body.mensajes?.length -1]?.parts[0]?.text);
                 const response = result.response;
                 const text = {parts: [{text: response.text()}], role: "model"};
