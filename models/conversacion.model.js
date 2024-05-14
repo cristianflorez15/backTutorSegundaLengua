@@ -9,6 +9,6 @@ const Conversacion = Schema({
         type: String,
         required: true,
     },
-}, { timestamps: true, collection: 'conversacions'})
+}, { timestamps: true, collection: 'conversacion'})
 
 module.exports = model( 'Conversacion', Conversacion );

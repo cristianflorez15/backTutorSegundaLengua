@@ -27,6 +27,6 @@ const Usuario = Schema({
         type: Date,
         required: true,
     },
-})
+}, { timestamps: true, collection: 'usuario'})
 
 module.exports = model( 'Usuario', Usuario );

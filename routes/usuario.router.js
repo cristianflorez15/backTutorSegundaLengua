@@ -18,13 +18,12 @@ router.post('/login',
 
 router.patch('/',
     tokenHandler(),
-    validatorHandler(idUsuario, 'query'),
     validatorHandler(editarUsuario, 'body'),
     usuarioController.edit
 )
 
 router.get('/',
-    validatorHandler(idUsuario, 'query'),
+    tokenHandler(),
     usuarioController.get
 )
 

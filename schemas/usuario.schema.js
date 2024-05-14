@@ -4,6 +4,7 @@ const nombre = Joi.string();
 const apellido = Joi.string();
 const correo = Joi.string();
 const contrasena = Joi.string();
+const nuevaContrasena = Joi.string();
 const idiomaNativo = Joi.string();
 const fechaNacimiento = Joi.date();
 const id = Joi.string();
@@ -22,8 +23,10 @@ const editarUsuario = Joi.object({
     apellido : apellido,
     correo : correo,
     contrasena : contrasena,
+    nuevaContrasena : nuevaContrasena,
     idiomaNativo : idiomaNativo,
     fechaNacimiento : fechaNacimiento,
+    userId: id,
 })
 
 const idUsuario = Joi.object({
