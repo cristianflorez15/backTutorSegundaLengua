@@ -8,14 +8,21 @@ class UsuarioController{
 
     async create(req=request, res=response){
         try {
-            const nuevoUsuario = new usuario({...req.body, contrasena: await bcrypt.hash(req.body.contrasena, 10)});
-            const usuarioCreado = await nuevoUsuario.save().then(usuario => {
-                return usuario._id;
-            });
-            if(usuarioCreado){
-                return res.status(200).json({message: 'Usuario creado exitosamente', status: 200, id: usuarioCreado});
+
+            let user = await usuario.findOne({correo: req.body.correo});
+
+            if(user){
+                return res.status(200).json({message: 'El correo electrónico ya está registrado', status: 205});
             }else{
-                return res.status(400).json({message: 'Problemas para crear usuario', status: 400});
+                const nuevoUsuario = new usuario({...req.body, contrasena: await bcrypt.hash(req.body.contrasena, 10)});
+                const usuarioCreado = await nuevoUsuario.save().then(usuario => {
+                    return usuario._id;
+                });
+                if(usuarioCreado){
+                    return res.status(200).json({message: 'Usuario creado exitosamente', status: 200, id: usuarioCreado});
+                }else{
+                    return res.status(400).json({message: 'Problemas para crear usuario', status: 400});
+                }
             }
         } catch (error) {
             console.log(error)

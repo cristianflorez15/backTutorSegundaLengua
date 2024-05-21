@@ -13,7 +13,8 @@ const Usuario = Schema({
     correo : {
         type: String,
         required: true,
-        unique: false
+        index: true,
+        unique: true
     },
     contrasena : {
         type: String,
