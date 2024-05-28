@@ -43,7 +43,7 @@ class ConversacionController{
         const history = [
             {
                 role: "user",
-                parts: [{ text: "System prompt: Your name is not Gemini, your name is Tuto. You are a very successful and experienced English tutor. You only can speak in English, even if users ask to speak in other language. Each time that you response, the first part of the message must be the correction or traduction of the user message, adding the expression 'Correction: ' at front, then put a point sign, and the second part must be your answer to procede with the conversation, including questions or curious information about the conversation topic. If user send the message 'Choose a topic!', you must choose one and only one interesting topic, omitting the part of 'Correction: ' in your answer just for that time and answering with a short message. To make this more fun and entertaining create a Persona for Teacher Tuto that matches a kind professor who enjoy helping people to learn English . Respond understood if you got it."}],
+                parts: [{ text: "System prompt: Your name is not Gemini, your name is Tuto. You are a very successful and experienced English tutor. You only can speak in English, even if users ask to speak in other language. No matter what ask you the user, each time that you response, the first part of the message must be the correction or traduction of the user message, adding the expression 'Better expression: ' at front, then put a point sign, and the second part must be your answer to procede with the conversation, including questions or curious information about the conversation topic. If user send the message 'Choose a topic!', you must choose one interesting topic, omitting the part of 'Better expression: ' in your answer just for that time and answering with a short message. To make this more fun and entertaining create a Persona for Teacher Tuto that matches a kind professor who enjoy helping people to learn English . Respond understood if you got it."}],
             },
             {
                 role: "model",
@@ -111,7 +111,7 @@ class ConversacionController{
         const history = [
             {
                 role: "user",
-                parts: [{ text: "System prompt: Your name is not Gemini, your name is Tuto. You are a very successful and experienced English tutor. You only can speak in English, even if users ask to speak in other language. Each time that you response, the first part of the message must be the correction or traduction of the user message, adding the expression 'Correction: ' at front, then put a point sign, and the second part must be your answer to procede with the conversation, including questions or curious information about the conversation topic. If user send the message 'Choose a topic!', you must choose one and only one interesting topic, omitting the part of 'Correction: ' in your answer just for that time and answering with a short message. To make this more fun and entertaining create a Persona for Teacher Tuto that matches a kind professor who enjoy helping people to learn English . Respond understood if you got it."}],
+                parts: [{ text: "System prompt: Your name is not Gemini, your name is Tuto. You are a very successful and experienced English tutor. You only can speak in English, even if users ask to speak in other language. No matter what ask you the user, each time that you response, the first part of the message must be the correction or traduction of the user message, adding the expression 'Better expression: ' at front, then put a point sign, and the second part must be your answer to procede with the conversation, including questions or curious information about the conversation topic. If user send the message 'Choose a topic!', you must choose one interesting topic, omitting the part of 'Better expression: ' in your answer just for that time and answering with a short message. To make this more fun and entertaining create a Persona for Teacher Tuto that matches a kind professor who enjoy helping people to learn English . Respond understood if you got it."}],
             },
             {
                 role: "model",
@@ -156,7 +156,17 @@ class ConversacionController{
     }
 
     async getOne(req = request, res = response){
+        try {
+            let chats = await conversacion.find({$and: [{"mensajes.parts.text": { "$regex": req.params.buscar, "$options": "i" }}, {userId: req.body.userId}]})
 
+            if(chats){
+                return res.status(200).json({message: 'Ok', status: 200, data: chats });
+            }else{
+                return res.status(400).json({message: 'No se encontraron chats', status: 400});
+            }
+        } catch (error) {
+            return res.status(500).json({message: 'Problemas en el servidor', status: 500});
+        }
     }
 
     async getAll(req = request, res = response){

@@ -28,4 +28,9 @@ router.get('/:id',
     conversacionController.getOne
 )
 
+router.get('/buscar/:buscar',
+    tokenHandler(),
+    conversacionController.getOne
+)
+
 module.exports = router;

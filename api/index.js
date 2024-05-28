@@ -1,3 +1,6 @@
+// Load swagger support
+const swagger = require('swagger-autogen')
+swagger();
 const express = require('express');
 const routerApi = require('../routes/index');
 const { logErrors, errorHandler, boomErrorHandler } = require('../middleware/error.handler');
